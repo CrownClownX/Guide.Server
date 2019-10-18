@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Guide.Services.Intefaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace Guide.Api.Controllers
 {
@@ -10,11 +12,26 @@ namespace Guide.Api.Controllers
     [ApiController]
     public class ValuesController : ControllerBase
     {
+        private readonly IUserService _userService;
+        private readonly ILogger _logger;
+
+        public ValuesController(IUserService userService, ILogger<ValuesController> logger)
+        {
+            _userService = userService;
+            _logger = logger;
+
+            Guid guid = Guid.NewGuid();
+
+            logger.LogDebug(guid.ToString());
+        }
+
         // GET api/values
         [HttpGet]
-        public ActionResult<IEnumerable<string>> Get()
+        public async Task<IEnumerable<object>> Get()
         {
-            return new string[] { "value1", "value2" };
+            var users = await _userService.GetUsers();
+
+            return users;
         }
 
         // GET api/values/5
