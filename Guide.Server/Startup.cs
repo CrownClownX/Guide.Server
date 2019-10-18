@@ -2,10 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
+using Guide.DAL.Repository;
+using Guide.DAL.Repository.Concretes;
+using Guide.DAL.Repository.Interfaces;
+using Guide.Services.Concretes;
+using Guide.Services.Intefaces;
+using Guide.Services.Settings;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -26,6 +34,22 @@ namespace Guide.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+            services.AddDbContext<ApplicationDbContext>(options =>
+                    options.UseMySql(Configuration.GetConnectionString("DefaultConnection")))
+                .AddScoped<IUnitOfWork, UnitOfWork>()
+                .AddScoped<IUserRepository, UserRepository>()
+                .AddScoped<IUserService, UserService>();
+
+            services.AddLogging();
+
+            var mappingConfig = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new MappingProfile());
+            });
+
+            IMapper mapper = mappingConfig.CreateMapper();
+            services.AddSingleton(mapper);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -40,6 +64,13 @@ namespace Guide.Api
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
+            app.UseCors(builder => builder
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials()
+            );
 
             app.UseHttpsRedirection();
             app.UseMvc();
