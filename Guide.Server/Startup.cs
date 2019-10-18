@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -35,8 +36,15 @@ namespace Guide.Api
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
+            var builder = new SqlConnectionStringBuilder(
+                Configuration.GetConnectionString("DefaultConnection"));
+
+            builder.Password = Configuration["DbPassword"];
+
+            string connection = builder.ConnectionString + ";port=3306;";
+
             services.AddDbContext<ApplicationDbContext>(options =>
-                    options.UseMySql(Configuration.GetConnectionString("DefaultConnection")))
+                    options.UseMySql(connection))
                 .AddScoped<IUnitOfWork, UnitOfWork>()
                 .AddScoped<IUserRepository, UserRepository>()
                 .AddScoped<IUserService, UserService>();

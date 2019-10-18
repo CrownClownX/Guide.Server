@@ -20,7 +20,9 @@ namespace Guide.Api.Controllers
             _userService = userService;
             _logger = logger;
 
-            logger.LogDebug("Ctor");
+            Guid guid = Guid.NewGuid();
+
+            logger.LogDebug(guid.ToString());
         }
 
         // GET api/values
