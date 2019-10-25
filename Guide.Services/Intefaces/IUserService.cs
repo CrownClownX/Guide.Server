@@ -8,6 +8,7 @@ namespace Guide.Services.Intefaces
 {
     public interface IUserService
     {
-        Task<IEnumerable<UserDto>> GetUsers();
+        Task<List<UserDto>> GetUsers(int itemPerPage, int page);
+        Task<UserDto> GetUser(long userId);
     }
 }
