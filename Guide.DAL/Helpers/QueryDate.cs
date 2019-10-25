@@ -9,7 +9,7 @@ namespace Guide.DAL.Helpers
     {
         public int CurrentPage { get; set; }
         public int ItemsPerPage { get; set; }
-        public Expression<Func<T, U>> SortBy { get; set; }
+        public Expression<Func<T, U>> OrderBy { get; set; }
         public Expression<Func<T, object>>[] Includes { get; set; }
         public Expression<Func<T, bool>>[] Conditions { get; set; }
     }

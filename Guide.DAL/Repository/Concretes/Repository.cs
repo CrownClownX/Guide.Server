@@ -36,28 +36,12 @@ namespace Guide.DAL.Repository.Concretes
         {
             var objects = _context.Set<T>().AsQueryable();
 
-            if(queryData.Includes != null)
-            {
-                foreach(var include in queryData.Includes)
-                {
-                    objects = objects.Include(include);
-                }
-            }
+            objects = objects.MultipleInclude(queryData.Includes);
+            objects = objects.NullableWhere(queryData.Conditions);
+            objects = objects.NullableOrderBy(queryData.OrderBy);
 
-            if(queryData.Conditions != null)
-            {
-                foreach (var condition in queryData.Conditions)
-                {
-                    objects = objects.Where(condition);
-                }
-            }
-
-            if (queryData.SortBy != null)
-            {
-                objects = objects.OrderBy(queryData.SortBy);
-            }
-
-            int skip = (queryData.CurrentPage - 1) * queryData.ItemsPerPage;
+            int currentPage = queryData.CurrentPage > 0 ? queryData.CurrentPage : 1;
+            int skip = (currentPage - 1) * queryData.ItemsPerPage;
 
             objects = objects.Skip(skip)
                 .Take(queryData.ItemsPerPage);
