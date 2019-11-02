@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Guide.BLL.Models
+namespace Guide.Services.Dtos
 {
-    public class User
+    public class NewUserDto
     {
-        public long Id { get; set; }
         public string Name { get; set; }
+        public string Password { get; set; }
         public string Email { get; set; }
         public string PhoneNumber { get; set; }
     }

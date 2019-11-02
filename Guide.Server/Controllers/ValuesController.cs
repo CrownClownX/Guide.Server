@@ -27,11 +27,11 @@ namespace Guide.Api.Controllers
 
         // GET api/values
         [HttpGet]
-        public async Task<IEnumerable<object>> Get()
+        public async Task<List<object>> Get()
         {
-            var users = await _userService.GetUsers();
 
-            return users;
+
+            return new List<object>();
         }
 
         // GET api/values/5

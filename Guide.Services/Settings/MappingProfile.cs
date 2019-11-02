@@ -12,6 +12,7 @@ namespace Guide.Services.Settings
         public MappingProfile()
         {
             CreateMap<User, UserDto>().ReverseMap();
+            CreateMap<NewUserDto, User>();
         }
     }
 }
