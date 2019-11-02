@@ -10,5 +10,8 @@ namespace Guide.Services.Intefaces
     {
         Task<List<UserDto>> GetUsers(int itemPerPage, int page);
         Task<UserDto> GetUser(long userId);
+        Task<UserDto> CreateUser(NewUserDto user);
+        Task<UserDto> UpdateUser(UserDto user);
+        Task DeleteUser(long userId);
     }
 }

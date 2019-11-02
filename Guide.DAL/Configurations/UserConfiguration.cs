@@ -18,6 +18,12 @@ namespace Guide.DAL.Configurations
 
             builder.Property(b => b.Name)
                 .HasColumnName("Name");
+
+            builder.Property(b => b.Email)
+                .HasColumnName("Email");
+
+            builder.Property(b => b.PhoneNumber)
+                .HasColumnName("Phone");
         }
     }
 }

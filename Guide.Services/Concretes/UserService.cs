@@ -60,5 +60,49 @@ namespace Guide.Services.Concretes
 
             return mappedUsers.ToList();
         }
+
+        public async Task<UserDto> CreateUser(NewUserDto user)
+        {
+            if (user == null)
+            {
+                throw new Exception("Model is not valid");
+            }
+
+            var userInDb = _mapper.Map<NewUserDto, User>(user);
+
+            _userRepository.Add(userInDb);
+            await _unitOfWork.CompleteAsync();
+
+            return _mapper.Map<User, UserDto>(userInDb);
+        }
+
+        public async Task<UserDto> UpdateUser(UserDto user)
+        {
+            var userInDb = await _userRepository.Get(u => u.Id == user.Id);
+
+            if (userInDb == null)
+            {
+                throw new Exception("User does not exist");
+            }
+
+            _mapper.Map(user, userInDb);
+
+            await _unitOfWork.CompleteAsync();
+
+            return _mapper.Map<User, UserDto>(userInDb);
+        }
+
+        public async Task DeleteUser(long userId)
+        {
+            var userInDb = await _userRepository.Get(u => u.Id == userId);
+
+            if (userInDb == null)
+            {
+                throw new Exception("User does not exist");
+            }
+
+            _userRepository.Remove(userInDb);
+            await _unitOfWork.CompleteAsync();
+        }
     }
 }

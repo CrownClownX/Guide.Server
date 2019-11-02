@@ -63,5 +63,65 @@ namespace Guide.Api.Controllers
 
             return Ok(response);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> NewUser([FromBody]NewUserDto user)
+        {
+            var response = new Response<UserDto>();
+
+            try
+            {
+                response.Object = await _userService.CreateUser(user);
+            }
+            catch (Exception e)
+            {
+                response.IsError = true;
+                response.ErrorMessage = e.Message;
+
+                _logger.LogError($"UserController | Error | Error message : {e.Message}");
+            }
+
+            return Ok(response);
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> UpdateUser(UserDto user)
+        {
+            var response = new Response<UserDto>();
+
+            try
+            {
+                response.Object = await _userService.UpdateUser(user);
+            }
+            catch (Exception e)
+            {
+                response.IsError = true;
+                response.ErrorMessage = e.Message;
+
+                _logger.LogError($"UserController | Error | Error message : {e.Message}");
+            }
+
+            return Ok();
+        }
+
+        [HttpDelete("{userId}")]
+        public async Task<IActionResult> DeleteUser(long userId)
+        {
+            var response = new Response<UserDto>();
+
+            try
+            {
+                await _userService.DeleteUser(userId);
+            }
+            catch (Exception e)
+            {
+                response.IsError = true;
+                response.ErrorMessage = e.Message;
+
+                _logger.LogError($"UserController | Error | Error message : {e.Message}");
+            }
+
+            return Ok();
+        }
     }
 }
