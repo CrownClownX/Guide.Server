@@ -47,7 +47,9 @@ namespace Guide.Api
                     options.UseMySql(connection))
                 .AddScoped<IUnitOfWork, UnitOfWork>()
                 .AddScoped<IUserRepository, UserRepository>()
-                .AddScoped<IUserService, UserService>();
+                .AddScoped<IMarkerRepository, MarkerRepository>()
+                .AddScoped<IUserService, UserService>()
+                .AddScoped<IMarkerService, MarkerService>();
 
             services.AddLogging();
 
