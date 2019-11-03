@@ -17,6 +17,7 @@ namespace Guide.DAL.Repository
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.ApplyConfiguration(new UserConfiguration());
+            modelBuilder.ApplyConfiguration(new MarkerConfiguration());
         }
     }
 }
