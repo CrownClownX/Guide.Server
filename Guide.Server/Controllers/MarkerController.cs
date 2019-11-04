@@ -5,12 +5,14 @@ using System.Threading.Tasks;
 using Guide.Api.ViewModels;
 using Guide.Services.Dtos;
 using Guide.Services.Intefaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
 namespace Guide.Api.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class MarkerController : ControllerBase

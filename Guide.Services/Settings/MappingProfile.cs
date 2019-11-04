@@ -14,6 +14,7 @@ namespace Guide.Services.Settings
             CreateMap<User, UserDto>().ReverseMap();
             CreateMap<NewUserDto, User>();
             CreateMap<Marker, MarkerDto>().ReverseMap();
+            CreateMap<User, Password>();
         }
     }
 }
