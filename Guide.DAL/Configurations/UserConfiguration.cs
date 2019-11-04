@@ -24,6 +24,12 @@ namespace Guide.DAL.Configurations
 
             builder.Property(b => b.PhoneNumber)
                 .HasColumnName("Phone");
+
+            builder.Property(b => b.PasswordHash)
+                .HasColumnName("passwordHash");
+
+            builder.Property(b => b.PasswordSalt)
+                .HasColumnName("passwordSalt");
         }
     }
 }
