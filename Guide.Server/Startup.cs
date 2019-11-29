@@ -59,6 +59,7 @@ namespace Guide.Api
                 .AddScoped<IUnitOfWork, UnitOfWork>()
                 .AddScoped<IUserRepository, UserRepository>()
                 .AddScoped<IMarkerRepository, MarkerRepository>()
+                .AddScoped<ICategoryRepository, CategoryRepository>()
                 .AddScoped<IUserService, UserService>()
                 .AddScoped<IMarkerService, MarkerService>()
                 .AddScoped<IAuthService, AuthService>()

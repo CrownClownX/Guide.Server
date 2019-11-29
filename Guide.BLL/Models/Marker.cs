@@ -10,7 +10,11 @@ namespace Guide.BLL.Models
         public float Latitude { get; set; }
         public float Longitude { get; set; }
         public string Name { get; set; }
+
         public long? UserId { get; set; }
         public User User { get; set; }
+
+        public long? CategoryId { get; set; }
+        public Category Category { get; set; }
     }
 }

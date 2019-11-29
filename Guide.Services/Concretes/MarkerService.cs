@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Guide.BLL.Enums;
 using Guide.BLL.Models;
 using Guide.DAL.Repository;
 using Guide.DAL.Repository.Interfaces;
@@ -9,18 +10,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Guide.BLL.Helpers;
 
 namespace Guide.Services.Concretes
 {
     public class MarkerService : IMarkerService
     {
         private readonly IMarkerRepository _markerRepository;
+        private readonly ICategoryRepository _categoryRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public MarkerService(IMarkerRepository markerRepository, IUnitOfWork unitOfWork, IMapper mapper)
+        public MarkerService(IMarkerRepository markerRepository, ICategoryRepository categoryRepository, IUnitOfWork unitOfWork, IMapper mapper)
         {
             _markerRepository = markerRepository;
+            _categoryRepository = categoryRepository;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
@@ -33,6 +37,14 @@ namespace Guide.Services.Concretes
             }
 
             var markerInDb = _mapper.Map<MarkerDto, Marker>(marker);
+            var category = await _categoryRepository.Get(c => c.Shortcut == marker.Shortcut);
+
+            if(category == null)
+            {
+                category = await _categoryRepository.Get(c => c.Shortcut == CategoryEnum.INFORMATION.GetStringValue());
+            }
+
+            markerInDb.Category = category;
 
             _markerRepository.Add(markerInDb);
             await _unitOfWork.CompleteAsync();
@@ -87,6 +99,13 @@ namespace Guide.Services.Concretes
             if (markerInDb == null)
             {
                 throw new Exception("User does not exist");
+            }
+
+            var category = await _categoryRepository.Get(c => c.Shortcut == marker.Shortcut);
+
+            if (category != null)
+            {
+                markerInDb.Category = category;
             }
 
             _mapper.Map(marker, markerInDb);

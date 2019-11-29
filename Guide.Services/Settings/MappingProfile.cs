@@ -13,7 +13,10 @@ namespace Guide.Services.Settings
         {
             CreateMap<User, UserDto>().ReverseMap();
             CreateMap<NewUserDto, User>();
-            CreateMap<Marker, MarkerDto>().ReverseMap();
+            CreateMap<Marker, MarkerDto>()
+                .ForMember(m => m.Shortcut, opt => opt.MapFrom(
+                    m2 => m2.Category != null ? m2.Category.Shortcut : ""));
+            CreateMap<MarkerDto, Marker>();
             CreateMap<User, Password>();
         }
     }
