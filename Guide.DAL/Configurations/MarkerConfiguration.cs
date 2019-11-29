@@ -32,6 +32,13 @@ namespace Guide.DAL.Configurations
               .WithMany(u => u.Markers)
               .HasForeignKey(m => m.UserId);
 
+            builder.Property(b => b.CategoryId)
+                .HasColumnName("categoryId");
+
+            builder.HasOne(m => m.Category)
+              .WithMany(u => u.Markers)
+              .HasForeignKey(m => m.CategoryId);
+
         }
     }
 }
