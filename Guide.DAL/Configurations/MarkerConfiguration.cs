@@ -19,6 +19,12 @@ namespace Guide.DAL.Configurations
             builder.Property(b => b.Name)
                 .HasColumnName("name");
 
+            builder.Property(b => b.Description)
+                .HasColumnName("description");
+
+            builder.Property(b => b.IsActive)
+                .HasColumnName("isActive");
+
             builder.Property(b => b.Latitude)
                 .HasColumnName("lat");
 

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Guide.BLL.Exceptions;
 using Guide.BLL.Logic.Interfaces;
 using Guide.BLL.Models;
 using Guide.DAL.Repository;
@@ -37,21 +38,11 @@ namespace Guide.Services.Concretes
         public async Task<UserDto> SignInUser(UserCredentialsDto credentials)
         {
             var user = await _userRepository
-                .Get(u => u.Email == credentials.Email);
-
-            if (user == null)
-            {
-                throw new Exception("User does not exist");
-            }
+                .GetWithThrow(u => u.Email == credentials.Email);
 
             var encryptedPassword = _mapper.Map<User, Password>(user);
 
-            bool isPasswordCorrect = _authLogic.VerifyPasswordHash(credentials.Password, encryptedPassword);
-
-            if (!isPasswordCorrect)
-            {
-                throw new Exception("Incorrect password");
-            }
+            _authLogic.VerifyPasswordHash(credentials.Password, encryptedPassword);
 
             var mappedUser = _mapper.Map<User, UserDto>(user);
             mappedUser.Token = _authLogic.GenerateToken(user.Id);
@@ -66,15 +57,10 @@ namespace Guide.Services.Concretes
 
             if (user != null)
             {
-                throw new Exception("User already exists");
+                throw new AlreadyExistException();
             }
 
             var encryptedPassword = _authLogic.CreatePasswordHash(credentials.Password);
-
-            if (encryptedPassword == null)
-            {
-                throw new Exception("Password is not valid");
-            }
 
             user = new User
             {
@@ -87,7 +73,9 @@ namespace Guide.Services.Concretes
             _userRepository.Add(user);
             await _unitOfWork.CompleteAsync();
 
-            return _mapper.Map<User, UserDto>(user);
-        }
+            var mappedUser = _mapper.Map<User, UserDto>(user);
+            mappedUser.Token = _authLogic.GenerateToken(user.Id);
+
+            return mappedUser;        }
     }
 }

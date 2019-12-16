@@ -1,4 +1,5 @@
-﻿using Guide.BLL.Models;
+﻿using Guide.BLL.Exceptions;
+using Guide.BLL.Models;
 using Guide.DAL.Repository.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -17,13 +18,28 @@ namespace Guide.DAL.Repository.Concretes
         {
         }
 
-        public virtual async Task<Marker> Get(Expression<Func<Marker, bool>> predicate)
+        public override async Task<Marker> GetWithThrow(Expression<Func<Marker, bool>> predicate)
+        {
+            var marker = await _context.Set<Marker>()
+                .Include(m => m.Category)
+                .Include(m => m.User)
+                .FirstOrDefaultAsync(predicate);
+
+            if(marker == null)
+            {
+                throw new DataNotFoundException();
+            }
+
+            return marker;
+        }
+
+        public override async Task<IEnumerable<Marker>> GetAll()
         {
             return await _context.Set<Marker>()
                 .Include(m => m.Category)
-                .Include(m => m.User)
-                .SingleOrDefaultAsync(predicate);
+                .ToListAsync();
         }
+
         public async Task<List<Marker>> GetMarkersByUserId(long userId)
         {
             var user = await _context.Set<User>()

@@ -12,26 +12,20 @@ namespace Guide.Api.Controllers
     [ApiController]
     public class ValuesController : ControllerBase
     {
-        private readonly IUserService _userService;
         private readonly ILogger _logger;
 
-        public ValuesController(IUserService userService, ILogger<ValuesController> logger)
+        public ValuesController(ILogger<ValuesController> logger)
         {
-            _userService = userService;
             _logger = logger;
-
-            Guid guid = Guid.NewGuid();
-
-            logger.LogDebug(guid.ToString());
         }
 
         // GET api/values
         [HttpGet]
         public async Task<List<object>> Get()
         {
+            await Task.Delay(500);
 
-
-            return new List<object>();
+            return new List<object>() { "one", "two"};
         }
 
         // GET api/values/5

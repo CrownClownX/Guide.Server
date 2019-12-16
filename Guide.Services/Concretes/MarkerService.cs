@@ -11,6 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Guide.BLL.Helpers;
+using Guide.BLL.Exceptions;
 
 namespace Guide.Services.Concretes
 {
@@ -33,7 +34,7 @@ namespace Guide.Services.Concretes
         {
             if (marker == null)
             {
-                throw new Exception("Model is not valid");
+                throw new ModelNotValidException();
             }
 
             var markerInDb = _mapper.Map<MarkerDto, Marker>(marker);
@@ -41,10 +42,11 @@ namespace Guide.Services.Concretes
 
             if(category == null)
             {
-                category = await _categoryRepository.Get(c => c.Shortcut == CategoryEnum.INFORMATION.GetStringValue());
+                category = await _categoryRepository.GetWithThrow(c => c.Shortcut == CategoryEnum.INFORMATION.GetStringValue());
             }
 
             markerInDb.Category = category;
+            markerInDb.IsActive = true;
 
             _markerRepository.Add(markerInDb);
             await _unitOfWork.CompleteAsync();
@@ -55,12 +57,7 @@ namespace Guide.Services.Concretes
 
         public async Task DeleteMarker(long markerId)
         {
-            var markerInDb = await _markerRepository.Get(m => m.Id == markerId);
-
-            if (markerInDb == null)
-            {
-                throw new Exception("User does not exist");
-            }
+            var markerInDb = await _markerRepository.GetWithThrow(m => m.Id == markerId);
 
             _markerRepository.Remove(markerInDb);
             await _unitOfWork.CompleteAsync();
@@ -68,24 +65,16 @@ namespace Guide.Services.Concretes
 
         public async Task<MarkerDto> GetMarker(long markerId)
         {
-            var marker = await _markerRepository.Get(m => m.Id == markerId);
+            var marker = await _markerRepository.GetWithThrow(m => m.Id == markerId);
 
-            if(marker == null)
-            {
-                throw new Exception("User does not exist");
-            }
+            var mappedMarker = _mapper.Map<Marker, MarkerDto>(marker);
 
-            return _mapper.Map<Marker, MarkerDto>(marker);
+            return mappedMarker;
         }
 
         public async Task<List<MarkerDto>> GetMarkers()
         {
             var markers = await _markerRepository.GetAll();
-
-            if(markers == null)
-            {
-                throw new Exception("There's no markers in database");
-            }
 
             var mappedMarkers =  _mapper.Map<IEnumerable<Marker>, IEnumerable<MarkerDto>>(markers);
 
@@ -94,14 +83,8 @@ namespace Guide.Services.Concretes
 
         public async Task<MarkerDto> UpdateMarker(MarkerDto marker)
         {
-            var markerInDb = await _markerRepository.Get(u => u.Id == marker.Id);
-
-            if (markerInDb == null)
-            {
-                throw new Exception("User does not exist");
-            }
-
-            var category = await _categoryRepository.Get(c => c.Shortcut == marker.Shortcut);
+            var markerInDb = await _markerRepository.GetWithThrow(u => u.Id == marker.Id);
+            var category = await _categoryRepository.GetWithThrow(c => c.Shortcut == marker.Shortcut);
 
             if (category != null)
             {
@@ -112,17 +95,14 @@ namespace Guide.Services.Concretes
 
             await _unitOfWork.CompleteAsync();
 
-            return _mapper.Map<Marker, MarkerDto>(markerInDb);
+            var mappedMarker = _mapper.Map<Marker, MarkerDto>(markerInDb);
+
+            return mappedMarker;
         }
 
         public async Task<List<MarkerDto>> GetMarkersByUserId(long userId)
         {
             var markersInDb = await _markerRepository.GetMarkersByUserId(userId);
-
-            if (markersInDb == null)
-            {
-                throw new Exception("User has not created any marker yet");
-            }
 
             var mappedMarkers = _mapper.Map<IEnumerable<Marker>, IEnumerable<MarkerDto>>(markersInDb);
 

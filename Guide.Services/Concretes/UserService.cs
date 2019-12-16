@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Guide.BLL.Exceptions;
 using Guide.BLL.Models;
 using Guide.DAL.Helpers;
 using Guide.DAL.Repository;
@@ -28,12 +29,7 @@ namespace Guide.Services.Concretes
 
         public async Task<UserDto> GetUser(long userId)
         {
-            var user = await _userRepository.Get(u => u.Id == userId);
-
-            if(user == null)
-            {
-                throw new Exception("User does not exist");
-            }
+            var user = await _userRepository.GetWithThrow(u => u.Id == userId);
 
             var mappedUser = _mapper.Map<User, UserDto>(user);
 
@@ -51,11 +47,6 @@ namespace Guide.Services.Concretes
 
             var users = await _userRepository.GetAllWithPaging(query);
 
-            if (users == null)
-            {
-                throw new Exception("There's no users in database");
-            }
-
             var mappedUsers = _mapper.Map<IEnumerable<User>, IEnumerable<UserDto>>(users);
 
             return mappedUsers.ToList();
@@ -65,7 +56,7 @@ namespace Guide.Services.Concretes
         {
             if (user == null)
             {
-                throw new Exception("Model is not valid");
+                throw new ModelNotValidException();
             }
 
             var userInDb = _mapper.Map<NewUserDto, User>(user);
@@ -78,12 +69,7 @@ namespace Guide.Services.Concretes
 
         public async Task<UserDto> UpdateUser(UserDto user)
         {
-            var userInDb = await _userRepository.Get(u => u.Id == user.Id);
-
-            if (userInDb == null)
-            {
-                throw new Exception("User does not exist");
-            }
+            var userInDb = await _userRepository.GetWithThrow(u => u.Id == user.Id);
 
             _mapper.Map(user, userInDb);
 
@@ -94,12 +80,7 @@ namespace Guide.Services.Concretes
 
         public async Task DeleteUser(long userId)
         {
-            var userInDb = await _userRepository.Get(u => u.Id == userId);
-
-            if (userInDb == null)
-            {
-                throw new Exception("User does not exist");
-            }
+            var userInDb = await _userRepository.GetWithThrow(u => u.Id == userId);
 
             _userRepository.Remove(userInDb);
             await _unitOfWork.CompleteAsync();

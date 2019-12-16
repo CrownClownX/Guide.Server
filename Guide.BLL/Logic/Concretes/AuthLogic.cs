@@ -1,4 +1,5 @@
-﻿using Guide.BLL.Logic.Interfaces;
+﻿using Guide.BLL.Exceptions;
+using Guide.BLL.Logic.Interfaces;
 using Guide.BLL.Models;
 using Guide.BLL.Settings;
 using Microsoft.Extensions.Options;
@@ -46,7 +47,7 @@ namespace Guide.BLL.Logic.Concretes
         {
             if (password == null || string.IsNullOrWhiteSpace(password))
             {
-                return null;
+                throw new PasswordNotValidException();
             }
 
             var encryptedPassword = new Password();
@@ -60,11 +61,11 @@ namespace Guide.BLL.Logic.Concretes
             return encryptedPassword;
         }
 
-        public bool VerifyPasswordHash(string password, Password encryptedPassword)
+        public void VerifyPasswordHash(string password, Password encryptedPassword)
         {
             if (password == null || string.IsNullOrWhiteSpace(password))
             {
-                return false;
+                throw new PasswordNotValidException();
             };
 
             using (var hmac = new HMACSHA512(encryptedPassword.PasswordSalt))
@@ -75,12 +76,10 @@ namespace Guide.BLL.Logic.Concretes
                 {
                     if (computedHash[i] != encryptedPassword.PasswordHash[i])
                     {
-                        return false;
+                        throw new PasswordNotValidException();
                     }
                 }
             }
-
-            return true;
         }
     }
 }
