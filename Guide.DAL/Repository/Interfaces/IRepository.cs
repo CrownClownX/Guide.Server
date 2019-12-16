@@ -10,6 +10,7 @@ namespace Guide.DAL.Repository.Interfaces
     public interface IRepository<T> where T : class
     {
         Task<IEnumerable<T>> Find(Expression<Func<T, bool>> predicate);
+        Task<T> GetWithThrow(Expression<Func<T, bool>> predicate);
         Task<T> Get(Expression<Func<T, bool>> predicate);
         Task<IEnumerable<T>> GetAll();
 

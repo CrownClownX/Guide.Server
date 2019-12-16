@@ -9,6 +9,6 @@ namespace Guide.BLL.Logic.Interfaces
     {
         string GenerateToken(long id);
         Password CreatePasswordHash(string password);
-        bool VerifyPasswordHash(string password, Password encryptedPassword);
+        void VerifyPasswordHash(string password, Password encryptedPassword);
     }
 }

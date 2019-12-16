@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Guide.Api.ViewModels;
+using Guide.BLL.Exceptions;
 using Guide.Services.Dtos;
 using Guide.Services.Intefaces;
 using Microsoft.AspNetCore.Authorization;
@@ -35,10 +36,10 @@ namespace Guide.Api.Controllers
             {
                 response.Object = await _userService.GetUser(id);
             }
-            catch (Exception e)
+            catch (DataNotFoundException e)
             {
                 response.IsError = true;
-                response.ErrorMessage = e.Message;
+                response.ErrorMessage = "User with given id does not exist";
 
                 _logger.LogError($"UserController | Error | Error message : {e.Message}");
             }
@@ -75,10 +76,10 @@ namespace Guide.Api.Controllers
             {
                 response.Object = await _userService.CreateUser(user);
             }
-            catch (Exception e)
+            catch (ModelNotValidException e)
             {
                 response.IsError = true;
-                response.ErrorMessage = e.Message;
+                response.ErrorMessage = "Data provided by client is not valid";
 
                 _logger.LogError($"UserController | Error | Error message : {e.Message}");
             }
@@ -95,10 +96,10 @@ namespace Guide.Api.Controllers
             {
                 response.Object = await _userService.UpdateUser(user);
             }
-            catch (Exception e)
+            catch (DataNotFoundException e)
             {
                 response.IsError = true;
-                response.ErrorMessage = e.Message;
+                response.ErrorMessage = "User with given id does not exist";
 
                 _logger.LogError($"UserController | Error | Error message : {e.Message}");
             }
@@ -115,10 +116,10 @@ namespace Guide.Api.Controllers
             {
                 await _userService.DeleteUser(userId);
             }
-            catch (Exception e)
+            catch (DataNotFoundException e)
             {
                 response.IsError = true;
-                response.ErrorMessage = e.Message;
+                response.ErrorMessage = "User with given id does not exist";
 
                 _logger.LogError($"UserController | Error | Error message : {e.Message}");
             }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Guide.Api.ViewModels;
+using Guide.BLL.Exceptions;
 using Guide.Services.Dtos;
 using Guide.Services.Intefaces;
 using Microsoft.AspNetCore.Authorization;
@@ -35,10 +36,10 @@ namespace Guide.Api.Controllers
             {
                 response.Object = await _markerService.GetMarker(id);
             }
-            catch(Exception e)
+            catch(DataNotFoundException e)
             {
                 response.IsError = true;
-                response.ErrorMessage = e.Message;
+                response.ErrorMessage = "There is no marker with given identification";
 
                 _logger.LogError($"MarkerController | Error | Error message : {e.Message}");
             }
@@ -95,10 +96,17 @@ namespace Guide.Api.Controllers
             {
                 response.Object = await _markerService.CreateMarker(marker);
             }
-            catch (Exception e)
+            catch (ModelNotValidException e)
             {
                 response.IsError = true;
-                response.ErrorMessage = e.Message;
+                response.ErrorMessage = "Data provided by client is not valid";
+
+                _logger.LogError($"MarkerController | Error | Error message : {e.Message}");
+            }
+            catch(DataNotFoundException e)
+            {
+                response.IsError = true;
+                response.ErrorMessage = "Data provided by client is not valid";
 
                 _logger.LogError($"MarkerController | Error | Error message : {e.Message}");
             }
@@ -115,10 +123,10 @@ namespace Guide.Api.Controllers
             {
                 await _markerService.DeleteMarker(markerId);
             }
-            catch (Exception e)
+            catch (DataNotFoundException e)
             {
                 response.IsError = true;
-                response.ErrorMessage = e.Message;
+                response.ErrorMessage = "There is no marker with given identification";
 
                 _logger.LogError($"MarkerController | Error | Error message : {e.Message}");
             }
@@ -135,10 +143,10 @@ namespace Guide.Api.Controllers
             {
                 response.Object = await _markerService.UpdateMarker(marker);
             }
-            catch (Exception e)
+            catch (DataNotFoundException e)
             {
                 response.IsError = true;
-                response.ErrorMessage = e.Message;
+                response.ErrorMessage = "There is no marker with given identification";
 
                 _logger.LogError($"MarkerController | Error | Error message : {e.Message}");
             }

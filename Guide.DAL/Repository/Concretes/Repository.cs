@@ -1,4 +1,5 @@
-﻿using Guide.DAL.Helpers;
+﻿using Guide.BLL.Exceptions;
+using Guide.DAL.Helpers;
 using Guide.DAL.Repository.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -26,10 +27,25 @@ namespace Guide.DAL.Repository.Concretes
                 .ToListAsync();
         }
 
+        public virtual async Task<T> GetWithThrow(Expression<Func<T, bool>> predicate)
+        {
+            var entity = await _context.Set<T>()
+                .FirstOrDefaultAsync(predicate);
+
+            if (entity == null)
+            {
+                throw new DataNotFoundException();
+            }
+
+            return entity;
+        }
+
         public virtual async Task<T> Get(Expression<Func<T, bool>> predicate)
         {
-            return await _context.Set<T>()
-                .SingleOrDefaultAsync(predicate);
+            var entity = await _context.Set<T>()
+                .FirstOrDefaultAsync(predicate);
+
+            return entity;
         }
 
         public async Task<IEnumerable<T>> GetAllWithPaging<U>(QueryDate<T, U> queryData)
@@ -75,7 +91,7 @@ namespace Guide.DAL.Repository.Concretes
         {
             _context.Set<T>().Add(entity);
         }
-
+        
         public void AddRange(IEnumerable<T> entities)
         {
             if(entities != null)

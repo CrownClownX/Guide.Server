@@ -25,6 +25,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
 
 namespace Guide.Api
 {
@@ -40,6 +41,8 @@ namespace Guide.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            Log.Information("Inside startup");
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             var builder = new SqlConnectionStringBuilder(
@@ -54,7 +57,8 @@ namespace Guide.Api
 
             var key = Encoding.ASCII.GetBytes(appSettings.Get<AuthorizationSettings>().Secret);
 
-            services.AddDbContext<ApplicationDbContext>(options =>
+            services
+                .AddDbContext<ApplicationDbContext>(options =>
                     options.UseMySql(connection))
                 .AddScoped<IUnitOfWork, UnitOfWork>()
                 .AddScoped<IUserRepository, UserRepository>()

@@ -12,5 +12,7 @@ namespace Guide.Services.Dtos
         public string Name { get; set; }
         public long UserId { get; set; }
         public string Shortcut { get; set; }
+        public bool IsActive { get; set; }
+        public string Description { get; set; }
     }
 }
